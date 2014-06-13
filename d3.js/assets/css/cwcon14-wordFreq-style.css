@@ -1,0 +1,41 @@
+body {
+  font: 10px sans-serif;
+}
+
+#chart {
+  margin-right: 125px;
+  padding-left: 10px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis text {display: none;}
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 5px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.theKey {
+  font: 9px sans-serif;
+  stroke: steelblue;
+}
+
+.theKey line {
+  fill: none;
+  stroke: steelblue;
+}
