@@ -1,10 +1,10 @@
 import re,sys,csv,json,collections
 
 stopwords = set([ "rt","teh","i","me","my","myself","we","us","#rsa14","rsa14","http","amp","like",
-                                "our","ours","ourselves","you","your","yours","yourself","just",
-                                "yourselves","he","him","his","himself","she","her","hers",
+                                "our","ours","ourselves","you","your","yours","yourself","just","dont",
+                                "yourselves","he","him","his","himself","she","her","hers","wouldn",
                                 "herself","it","its","itself","they","them","their","theirs",
-                                "themselves","what","which","who","whom","whose","this",
+                                "themselves","what","which","who","whom","whose","this","get",
                                 "that","these","those","am","is","are","was","were","be","been",
                                 "being","have","has","had","having","do","does","did","doing",
                                 "will","would","should","can","could","ought","i'm","you're","he's",
@@ -22,23 +22,50 @@ stopwords = set([ "rt","teh","i","me","my","myself","we","us","#rsa14","rsa14","
                                 "such","no","nor","not","only","own","same","so","than","too","very","say","says","said","shall"])
 re_word = re.compile(r'[a-z0-9\']+')
 words = collections.Counter()
+ITEM_MAX = 3000 #enter optional limit to indexing common words
+json_file_in = "enterFilenameIn.json" #name your json file/input here
+csv_file_out = "enterFilenameOut.csv" #name your new/output file here
 
 def tally_words():
-    for tweets in json.load(open('merge.json')):
+    for tweets in json.load(open(json_file_in)):
         for word in re_word.findall(tweets['text'].lower()):
             if len(word) > 2 and word not in stopwords:
                 words[word] += 1
 
 def write_word_count():
-    with open('testing_rsaCount.csv', 'wb') as c:
-        writer = csv.writer(c, lineterminator='\n')
+    with open(csv_file_out, 'wb') as c:
+        writer = csv.writer(c, lineterminator='\r\n')
         writer.writerow(['word', 'count'])
-        for word, count in words.most_common():
+        for word, count in reversed(words.most_common(ITEM_MAX)):
             writer.writerow([word.encode('utf8'), count])
+
+def append_id_column(csv_file_out):
+    
+    f = open(csv_file_out, 'r')
+    contents = f.readlines()
+    f.close()
+
+    reader = csv.reader(contents)
+
+    f = open(csv_file_out, 'wb')
+    writer = csv.writer(f)
+
+    header = reader.next()
+    header.append('id')
+    writer.writerow(header)
+
+    the_id = 0
+    for row in reader:
+        the_id += 1
+        row.append(the_id)
+        writer.writerow(row)
+
+    f.close()
 
 def main():
     tally_words()
     write_word_count()
+    append_id_column(csv_file_out)
 
 if __name__ == '__main__':
     main()
